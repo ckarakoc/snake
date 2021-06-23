@@ -61,7 +61,7 @@ function redrawFood(context, food, sqrSize) {
 function drawText(snakeCanvas, context, text, sqrSize) {
     context.font = "50px serif";
     context.fillStyle = "black";
-    context.fillRect(0, 2 * sqrSize, snakeCanvas.width, 3 * sqrSize)
+    context.fillRect(0, 0, snakeCanvas.width, 60)
     context.fillStyle = "white";
     context.fillText(text, sqrSize, 4 * sqrSize);
 }
@@ -83,7 +83,7 @@ function hasGameEnded(snakeCanvas, snake, sqrSize) {
 
 let snakeCanvas = document.getElementById("snake-canvas");
 let context = snakeCanvas.getContext("2d");
-const sqrSize = 25;
+const sqrSize = 10;
 
 snakeCanvas.width = 700;
 snakeCanvas.height = 500;
@@ -106,8 +106,11 @@ let ended = false;
 // initial direction right
 let dx = sqrSize;
 let dy = 0;
-
+const speed = 45;
+let down = false;
 document.addEventListener("keydown", event => {
+    if (down) return;
+    down = true;
     const goingUp = dy === -sqrSize;
     const goingDown = dy === sqrSize;
     const goingRight = dx === sqrSize;
@@ -145,7 +148,11 @@ document.addEventListener("keydown", event => {
         ended = false;
         window.requestAnimationFrame(loop);
     }
-});
+}, false);
+
+document.addEventListener("keyup", () => {
+    down = false;
+}, false)
 
 window.addEventListener("keydown", function (e) {
     if (["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].indexOf(e.code) > -1) {
@@ -162,12 +169,11 @@ drawSnake(context, snake, snakeColor, sqrSize);
 let previousTime = 0.0;
 const loop = time => {
     const dt = time - previousTime;
-    if (dt > 100) {
+    if (dt > speed) {
         previousTime = time;
 
         // render + update
         drawGrid(context, snakeCanvas.width, snakeCanvas.height, sqrSize);
-        moveSnake(snake, dx, dy);
         if (snake[snake.length - 1].x === food.x && snake[snake.length - 1].y === food.y) { // collision
             console.log("HERE");
             snake.push({x: snake[snake.length - 1].x + dx, y: snake[snake.length - 1].y + dy});
@@ -175,6 +181,7 @@ const loop = time => {
         } else {
             redrawFood(context, food, sqrSize);
         }
+        moveSnake(snake, dx, dy);
         drawSnake(context, snake, snakeColor, sqrSize);
     }
 
