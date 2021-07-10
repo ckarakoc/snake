@@ -106,11 +106,8 @@ let ended = false;
 // initial direction right
 let dx = sqrSize;
 let dy = 0;
-const speed = 45;
-let down = false;
+const speed = 30;
 document.addEventListener("keydown", event => {
-    if (down) return;
-    down = true;
     const goingUp = dy === -sqrSize;
     const goingDown = dy === sqrSize;
     const goingRight = dx === sqrSize;
@@ -119,24 +116,16 @@ document.addEventListener("keydown", event => {
     if (event.key === "ArrowUp" && !goingDown) {
         dx = 0;
         dy = -sqrSize;
-    }
-
-    if (event.key === "ArrowDown" && !goingUp) {
+    } else if (event.key === "ArrowDown" && !goingUp) {
         dx = 0;
         dy = sqrSize;
-    }
-
-    if (event.key === "ArrowLeft" && !goingRight) {
+    } else if (event.key === "ArrowLeft" && !goingRight) {
         dx = -sqrSize;
         dy = -0;
-    }
-
-    if (event.key === "ArrowRight" && !goingLeft) {
+    } else if (event.key === "ArrowRight" && !goingLeft) {
         dx = sqrSize;
         dy = 0;
-    }
-
-    if (event.key === "Enter" && !playing) {
+    } else if (event.key === "Enter" && !playing) {
         snake = [
             {x: snakeCanvas.width / 2 - 2 * sqrSize, y: snakeCanvas.height / 2},
             {x: snakeCanvas.width / 2 - sqrSize, y: snakeCanvas.height / 2},
@@ -144,15 +133,13 @@ document.addEventListener("keydown", event => {
             {x: snakeCanvas.width / 2 + sqrSize, y: snakeCanvas.height / 2},
             {x: snakeCanvas.width / 2 + 2 * sqrSize, y: snakeCanvas.height / 2},
         ];
+        dx = sqrSize;
+        dy = 0;
         playing = true;
         ended = false;
         window.requestAnimationFrame(loop);
     }
 }, false);
-
-document.addEventListener("keyup", () => {
-    down = false;
-}, false)
 
 window.addEventListener("keydown", function (e) {
     if (["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].indexOf(e.code) > -1) {
@@ -162,9 +149,9 @@ window.addEventListener("keydown", function (e) {
 
 // Init
 drawGrid(context, snakeCanvas.width, snakeCanvas.height, sqrSize);
-drawText(snakeCanvas, context, "Press ENTER to play", sqrSize);
 let food = drawFood(snakeCanvas, context, snake, snakeColor, sqrSize);
 drawSnake(context, snake, snakeColor, sqrSize);
+drawText(snakeCanvas, context, "Press ENTER to play", sqrSize);
 
 let previousTime = 0.0;
 const loop = time => {
